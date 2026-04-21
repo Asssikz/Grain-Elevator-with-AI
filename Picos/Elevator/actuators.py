@@ -18,7 +18,7 @@ auto_mode_state = {
 
 treshold = {
     "air_low": 60,
-    "cooler": 25,
+    "cooler": 25.0,
 }
 
 # API for actuators
