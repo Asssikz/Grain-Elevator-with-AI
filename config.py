@@ -47,3 +47,22 @@ I2S_CONFIG = {
     'ibuf': 4096,
     'nch': NUM_CHANNELS}
 ### ====== I2S and Audio CONFIGURATION ======
+
+
+## ================================================
+## Elevator configuration
+## ================================================
+
+### ====== Hardware pins ======
+AIR_PIN = "F"
+COOLER_PIN = "H"
+CLIMATE_PIN = "B"
+DISTANCE_PIN = "A"
+
+ELEVATOR_PINS = {
+    "air": AIR_PIN,
+    "cooler": COOLER_PIN,
+    "climate": CLIMATE_PIN,
+    "distance": DISTANCE_PIN,
+}
+### ====== Hardware pins ======

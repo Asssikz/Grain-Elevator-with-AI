@@ -1,9 +1,8 @@
-from Helpers.helpers import periodic
 from pibody import LED, LEDTower
 from config import ELEVATOR_PINS
-from telemetry import telemetry
+from Picos.Elevator.telemetry import telemetry
 
-heater = LEDTower(ELEVATOR_PINS["heater"])
+cooler = LEDTower(ELEVATOR_PINS["cooler"])
 air = LED(ELEVATOR_PINS["air"])
 
 actuator_state = {
@@ -11,13 +10,13 @@ actuator_state = {
     "cooler": False,
 }
 
-auto_mode_state = { 
+auto_state = { 
     "air": True,
     "cooler": True,
 }
 
 treshold = {
-    "air_low": 60,
+    "air": 60,
     "cooler": 25.0,
 }
 
@@ -25,38 +24,50 @@ treshold = {
 def air_on():
     air.on()
     actuator_state["air"] = True
-    auto_mode_state["air"] = False
+    auto_state["air"] = False
     return actuator_state
 
 def air_off():
     air.off()
     actuator_state["air"] = False
-    auto_mode_state["air"] = False
+    auto_state["air"] = False
     return actuator_state
 
 def cooler_on():
-    heater.fill((0, 255, 255)) 
-    heater.show()
+    cooler.fill((0, 255, 255)) 
+    cooler.write()
     actuator_state["cooler"] = True
-    auto_mode_state["cooler"] = False
+    auto_state["cooler"] = False
     return actuator_state
 
 def cooler_off():
-    heater.fill((0, 0, 0))
-    heater.show()
+    cooler.fill((0, 0, 0))
+    cooler.write()
     actuator_state["cooler"] = False
-    auto_mode_state["cooler"] = False
+    auto_state["cooler"] = False
     return actuator_state
 
-def auto_mode_on():
-    auto_mode_state["air"] = True
-    auto_mode_state["cooler"] = True
-    return auto_mode_state
+def light_on():
+    cooler.fill((255, 255, 255))
+    cooler.write()
+    auto_state["cooler"] = False
+    return actuator_state
 
-def auto_mode_off():
-    auto_mode_state["air"] = False
-    auto_mode_state["cooler"] = False
-    return auto_mode_state
+def light_off():
+    cooler.fill((0, 0, 0))
+    cooler.write()
+    auto_state["cooler"] = False
+    return actuator_state
+
+def auto_on():
+    auto_state["air"] = True
+    auto_state["cooler"] = True
+    return auto_state
+
+def auto_off():
+    auto_state["air"] = False
+    auto_state["cooler"] = False
+    return auto_state
 
 # Inner functions
 def _air_on():
@@ -68,23 +79,22 @@ def _air_off():
     actuator_state["air"] = False
 
 def _cooler_on():
-    heater.fill((0, 255, 255))
-    heater.show()
+    cooler.fill((0, 255, 255))
+    cooler.write()
     actuator_state["cooler"] = True
 
 def _cooler_off():
-    heater.fill((0, 0, 0)) 
-    heater.show()
+    cooler.fill((0, 0, 0)) 
+    cooler.write()
     actuator_state["cooler"] = False
 
-@periodic(10)
 def auto_mode():
-    if auto_mode_state["air"]:
+    if auto_state["air"]:
         if telemetry["hum"] > treshold["air"]:
             _air_on()
         elif telemetry["hum"] < treshold["air"]:
             _air_off()
-    if auto_mode_state["cooler"]:
+    if auto_state["cooler"]:
         if telemetry["temp"] < treshold["cooler"]:
             _cooler_on()
         elif telemetry["temp"] > treshold["cooler"]:

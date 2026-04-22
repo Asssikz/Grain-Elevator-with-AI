@@ -1,4 +1,3 @@
-from Helpers.helpers import periodic
 from pibody import Climate, Distance
 from config import ELEVATOR_PINS
 
@@ -23,7 +22,6 @@ except:
     distance = None
     telemetry["distance"] = 70
 
-@periodic(10)
 def get_telemetry():
     if climate is not None:
         telemetry["temp"] = round(climate.read_temperature(), 1)
